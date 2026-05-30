@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoL 내전 팀 매칭</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span class="topbar-title" id="appTitle">LoL 내전</span>
+    <div class="topbar-right">
+      <span class="topbar-sub" id="statLabel">명 등록됨</span>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="ko">한국어</button>
+        <button class="lang-btn"        data-lang="en">EN</button>
+        <button class="lang-btn"        data-lang="ja">日本語</button>
+        <button class="lang-btn"        data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="left-panel">
+
+      <!-- Stat + Actions -->
+      <div class="card">
+        <div class="stat-block">
+          <div class="stat-row">
+            <div>
+              <div class="stat-count">
+                <span class="n-cur" id="countNum">0</span><span class="n-sep">/</span><span class="n-tot">10</span>
+              </div>
+              <div class="stat-label" id="statLabelSub">명 등록됨</div>
+            </div>
+            <div class="stat-actions">
+              <button class="btn btn-primary" id="btnAdd">
+                <span data-i18n="btnAdd">참가자 추가</span>
+              </button>
+              <button class="btn btn-ghost" id="btnReset" style="display:none" data-i18n="btnReset">초기화</button>
+            </div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-track">
+              <div class="progress-fill" id="countProgress" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Match button (10명 시 노출) -->
+        <div id="btnMatchWrap" style="display:none; padding: 0 28px 24px;">
+          <button class="btn btn-primary btn-match" id="btnMatch">
+            <span data-i18n="btnMatch">팀 밸런스 맞추기</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Player list card -->
+      <div class="card" id="playerListCard" style="display:none">
+        <div class="section-label" id="sectionLabelPlayers">참가자</div>
+        <div id="playerGrid" class="player-list"></div>
+      </div>
+
+      <!-- Empty state card -->
+      <div class="card" id="emptyCard">
+        <div class="empty-state">
+          <div class="empty-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="10" r="5" stroke="#C2C8D0" stroke-width="2"/>
+              <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#C2C8D0" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="empty-title" id="emptyTitle">참가자를 추가해주세요</div>
+          <div class="empty-sub"   id="emptySubtitle">최대 10명까지 등록할 수 있어요</div>
+        </div>
+      </div>
+
+    </div><!-- /left-panel -->
+
+    <!-- ── RIGHT PANEL ── -->
+    <div class="right-panel">
+
+      <!-- Placeholder (10명 미만) -->
+      <div class="card placeholder-card" id="placeholderCard">
+        <div class="placeholder-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4"  y="14" width="10" height="14" rx="3" stroke="#C2C8D0" stroke-width="2"/>
+            <rect x="18" y="8"  width="10" height="20" rx="3" stroke="#C2C8D0" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="placeholder-title" id="placeholderTitle">팀이 구성되면 여기에 표시됩니다</div>
+        <div class="placeholder-sub"   id="placeholderSub">참가자 10명을 모두 등록하고&#10;팀 밸런스 맞추기를 눌러주세요</div>
+      </div>
+
+      <!-- Result screen -->
+      <div id="resultScreen" class="result-screen">
+
+        <div class="card result-header-card">
+          <div class="result-title" data-i18n="resultTitle">팀 편성 완료</div>
+          <div class="result-subtitle" id="resultSubtitle"></div>
+        </div>
+
+        <div id="errorMsg" class="error-msg" style="display:none"></div>
+        <div id="warnMsg"  class="warn-msg"  style="display:none"></div>
+
+        <div class="card" id="balanceSection">
+          <div class="balance-section">
+            <div class="balance-label" data-i18n="balanceLabel">팀 점수 밸런스</div>
+            <div class="balance-bar-wrap">
+              <span class="balance-pct blue" id="bluePct">50%</span>
+              <div class="balance-bar-bg">
+                <div class="balance-bar-blue" id="blueBar" style="width:50%"></div>
+                <div class="balance-bar-red"  id="redBar"  style="width:50%"></div>
+              </div>
+              <span class="balance-pct red" id="redPct">50%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="teams-grid" id="teamsWrapper"></div>
+
+        <div class="card result-actions-card">
+          <button class="btn btn-ghost"    id="btnBack"   data-i18n="btnBack">← 돌아가기</button>
+          <button class="btn btn-secondary" id="btnCopy">
+            <span data-i18n="btnCopy">디스코드 복사</span>
+          </button>
+          <button class="btn btn-primary"  id="btnReroll">
+            <span data-i18n="btnReroll">Reroll</span>
+          </button>
+        </div>
+
+      </div><!-- /resultScreen -->
+
+    </div><!-- /right-panel -->
+
+  </div><!-- /dashboard -->
+</div><!-- /page -->
+
+<!-- ── ADD PLAYER MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle"></span>
+      <button class="modal-close" id="modalCloseBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="step-indicator" id="stepIndicator"></div>
+
+      <div class="step-panel active" id="step1">
+        <div class="step-label" id="stepLabel1">Step 1 — 이름</div>
+        <input class="input-field" id="inputName" type="text" maxlength="20">
+        <button class="modal-btn-primary" id="btnNext" data-i18n="btnNext">다음</button>
+      </div>
+
+      <div class="step-panel" id="step2">
+        <div class="step-label" id="stepLabel2">Step 2 — 티어</div>
+        <div class="chip-grid" id="tierChips"></div>
+      </div>
+
+      <div class="step-panel" id="step3">
+        <div class="step-label" id="stepLabel3">Step 3 — 세부 티어</div>
+        <div class="chip-grid" id="subTierChips"></div>
+        <div id="masterLpWrap" style="display:none; margin-top:16px;">
+          <div class="step-label" id="masterLpLabel">마스터 LP 구간</div>
+          <div class="chip-grid" id="masterLpChips"></div>
+        </div>
+      </div>
+
+      <div class="step-panel" id="step4">
+        <div class="step-label" id="stepLabel4">Step 4 — 선호 라인</div>
+        <div class="chip-grid" id="laneChips"></div>
+      </div>
+
+      <div class="step-panel" id="step5">
+        <div class="step-label" id="stepLabel5">Step 5 — 필수 동료</div>
+        <div class="chip-grid" id="mustChips"></div>
+        <button class="modal-btn-ghost" id="btnSkip" data-i18n="btnSkip">건너뛰기</button>
+      </div>
+
+      <div class="step-panel" id="step6">
+        <div class="step-label" id="stepLabel6">Step 6 — 기피 동료</div>
+        <div class="chip-grid" id="avoidChips"></div>
+        <button class="modal-btn-primary" id="btnFinish" data-i18n="btnFinish">등록 완료</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFLICT MODAL ── -->
+<div class="modal-overlay" id="conflictOverlay">
+  <div class="modal-sheet" id="conflictSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="conflictTitle"></span>
+      <button class="modal-close" id="conflictCloseBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="conflict-msg" id="conflictMsg"></p>
+      <div class="conflict-btn-row">
+        <button class="btn btn-ghost"    id="conflictCancelBtn"></button>
+        <button class="btn btn-primary"  id="conflictForceBtn"  style="background:var(--red)"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
