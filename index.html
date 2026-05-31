@@ -9,7 +9,7 @@
 <body>
   <div class="landing">
     <div class="landing-top">
-      <div class="lang-toggle" id="langToggle">
+      <div class="lang-toggle">
         <button class="lang-btn active" data-lang="ko">한국어</button>
         <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="ja">日本語</button>
@@ -17,20 +17,28 @@
       </div>
     </div>
     <h1 class="landing-title">Team Matching</h1>
-    <p class="landing-sub" id="subtitle">게임 모드를 선택해주세요</p>
+    <p class="landing-sub" id="subtitle"></p>
     <div class="card-grid">
       <a class="mode-card" href="lol/index.html">
         <div class="mode-badge">5 vs 5</div>
-        <div class="mode-title" id="lolTitle">리그 오브 레전드</div>
-        <div class="mode-desc" id="lolDesc">10명을 두 팀으로 나눠 티어 밸런스를 맞춰줍니다</div>
+        <div class="mode-title" id="lolTitle"></div>
+        <div class="mode-desc" id="lolDesc"></div>
       </a>
       <a class="mode-card" href="tft/index.html">
         <div class="mode-badge">2인조</div>
-        <div class="mode-title" id="tftTitle">롤토체스 더블업</div>
-        <div class="mode-desc" id="tftDesc">짝수 인원을 2인 1조로 균등하게 매칭합니다</div>
+        <div class="mode-title" id="tftTitle"></div>
+        <div class="mode-desc" id="tftDesc"></div>
+      </a>
+      <a class="mode-card" href="ow/index.html">
+        <div class="mode-badge">5 vs 5</div>
+        <div class="mode-title" id="owTitle"></div>
+        <div class="mode-desc" id="owDesc"></div>
       </a>
     </div>
   </div>
+  <script src="shared/tierData.js"></script>
+  <script src="shared/utils.js"></script>
+  <script src="shared/i18n.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
