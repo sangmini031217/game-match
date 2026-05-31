@@ -33,6 +33,15 @@
           </div>
           <div class="options-row">
             <div class="option-item">
+              <label class="option-label" id="matchSizeLabel"></label>
+              <select class="option-select" id="matchSizeSelect">
+                <option value="2">2 vs 2</option>
+                <option value="3">3 vs 3</option>
+                <option value="4">4 vs 4</option>
+                <option value="5" selected>5 vs 5</option>
+              </select>
+            </div>
+            <div class="option-item">
               <label class="toggle-wrap">
                 <input type="checkbox" id="autoNameToggle" checked>
                 <span class="toggle-label" id="autoNameLabel"></span>
@@ -52,7 +61,7 @@
           <button class="btn btn-primary btn-match" id="btnMatch"><span id="btnMatchText"></span></button>
         </div>
       </div>
-      <div class="card guide-card"><div class="guide-item" id="guideAlgo"></div></div>
+      <div class="card guide-card"><div class="guide-item" id="guideAutoFill"></div><div class="guide-item" id="guideRelation"></div><div class="guide-item" id="guideAlgo"></div></div>
       <div class="card" id="playerListCard" style="display:none">
         <div class="section-label" id="sectionLabelPlayers"></div>
         <div id="playerGrid" class="player-list"></div>
@@ -80,7 +89,7 @@
   </div>
 </div>
 <!-- Modal -->
-<div class="modal-overlay" id="modalOverlay"><div class="modal-sheet"><div class="modal-header"><span class="modal-title" id="modalTitle"></span><button class="modal-close" id="modalCloseBtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><div class="modal-body"><div class="step-indicator" id="stepIndicator"></div><div class="step-panel active" id="step1"><div class="step-label" id="stepLabel1"></div><input class="input-field" id="inputName" type="text" maxlength="20"><button class="modal-btn-primary" id="btnNext"></button></div><div class="step-panel" id="step2"><div class="step-label" id="stepLabel2"></div><div class="chip-grid" id="tierChips"></div></div><div class="step-panel" id="step3"><div class="step-label" id="stepLabel3"></div><div class="chip-grid" id="subTierChips"></div></div><div class="step-panel" id="step4"><div class="step-label" id="stepLabel4"></div><div class="chip-grid" id="roleChips"></div></div></div></div></div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal-sheet"><div class="modal-header"><button class="modal-back" id="modalBackBtn" style="display:none">&larr;</button><span class="modal-title" id="modalTitle"></span><button class="modal-close" id="modalCloseBtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><div class="modal-body"><div class="step-indicator" id="stepIndicator"></div><div class="step-panel active" id="step1"><div class="step-label" id="stepLabel1"></div><input class="input-field" id="inputName" type="text" maxlength="20"><button class="modal-btn-primary" id="btnNext"></button></div><div class="step-panel" id="step2"><div class="step-label" id="stepLabel2"></div><div class="chip-grid" id="tierChips"></div></div><div class="step-panel" id="step3"><div class="step-label" id="stepLabel3"></div><div class="chip-grid" id="subTierChips"></div></div><div class="step-panel" id="step4"><div class="step-label" id="stepLabel4"></div><div class="chip-grid" id="roleChips"></div></div></div></div></div>
 <!-- Edit Modal -->
 <div class="modal-overlay" id="editOverlay"><div class="modal-sheet"><div class="modal-header"><span class="modal-title" id="editModalTitle"></span><button class="modal-close" id="editCloseBtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><div class="modal-body" id="editModalBody"></div></div></div>
 <div class="toast" id="toast"></div>

@@ -30,7 +30,9 @@ function goStep(n){
   for(let i=1;i<=4;i++){const e=$('stepLabel'+i);if(e)e.textContent=t('stepLabels')[i-1]||'';}
   const ml=$('masterLpLabel');if(ml)ml.textContent=t('masterLpLabel');
   const nx=$('btnNext');if(nx)nx.textContent=t('btnNext');
+  const back=$('modalBackBtn');if(back)back.style.display=n>1?'':'none';
 }
+function prevStep(){if(curStep>1)goStep(curStep-1);}
 
 function nextStep(from){
   if(from===1){

@@ -19,7 +19,7 @@ function applyI18n(){
   s('sectionLabelPlayers',t('sectionPlayers'));s('tftCountLabel',t('tftCountLabel'));
   s('btnBack',t('btnBack'));s('btnCopyText',t('btnCopy'));
   s('btnUndo','↩ '+t('btnUndo'));s('autoNameLabel',t('autoNameLabel'));s('simpleModeLabel',t('simpleMode'));
-  s('btnNext',t('btnNext'));s('guideAlgo','⚖️ '+t('guideAlgo'));
+  s('btnNext',t('btnNext'));s('guideAutoFill','🎲 '+t('guideAutoFill'));s('guideRelation','🚫 '+t('guideRelation'));s('guideAlgo','⚖️ '+t('guideAlgo'));
   const ait=$('algoInfoText');if(ait)ait.textContent='⚖️ '+t('guideAlgo');
   const inp=$('inputName');if(inp)inp.placeholder=t('inputPlaceholder');
   for(let i=1;i<=3;i++){const e=$('stepLabel'+i);if(e)e.textContent=t('stepLabels')[i-1];}
@@ -92,7 +92,8 @@ function openModal(){
   if(!autoName)setTimeout(()=>$('inputName').focus(),300);
 }
 function closeModal(){$('modalOverlay').classList.remove('active');}
-function goStep(n){for(let i=1;i<=3;i++){const el=$('step'+i);if(el)el.classList.toggle('active',i===n);}step=n;for(let i=1;i<=3;i++){const d=$('dot'+i);if(d)d.className='step-dot'+(i<n?' done':i===n?' active':'');}$('modalTitle').textContent=t('stepTitles')[n-1]||'';for(let i=1;i<=3;i++){const e=$('stepLabel'+i);if(e)e.textContent=t('stepLabels')[i-1]||'';}const nx=$('btnNext');if(nx)nx.textContent=t('btnNext');}
+function goStep(n){for(let i=1;i<=3;i++){const el=$('step'+i);if(el)el.classList.toggle('active',i===n);}step=n;for(let i=1;i<=3;i++){const d=$('dot'+i);if(d)d.className='step-dot'+(i<n?' done':i===n?' active':'');}$('modalTitle').textContent=t('stepTitles')[n-1]||'';for(let i=1;i<=3;i++){const e=$('stepLabel'+i);if(e)e.textContent=t('stepLabels')[i-1]||'';}const nx=$('btnNext');if(nx)nx.textContent=t('btnNext');const back=$('modalBackBtn');if(back)back.style.display=n>1?'':'none';}
+function prevStep(){if(step>1)goStep(step-1);}
 function nextStep(f){if(f===1){const nm=$('inputName').value.trim();if(!nm){showToast(t('nameRequired'));return;}draft.name=nm;buildTier();goStep(2);}}
 function buildTier(){const ts=t('tiers');$('tierChips').innerHTML=TIER_KEYS.map((k,i)=>`<div class="chip" data-t="${k}">${ts[i]}</div>`).join('');$('tierChips').querySelectorAll('.chip').forEach(e=>e.addEventListener('click',()=>selTier(e,e.dataset.t)));}
 function selTier(el,tk){draft.tierKey=tk;$('tierChips').querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');setTimeout(()=>{if(simpleMode){draft.subTier=null;draft.masterLpIdx=null;finishAdd();return;}if(NO_SUB.includes(tk)){if(tk==='마스터')buildMaster();else{draft.subTier=null;draft.masterLpIdx=null;finishAdd();}}else{buildSub(tk);goStep(3);}},180);}
@@ -131,7 +132,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('simpleModeToggle').addEventListener('change',e=>{simpleMode=e.target.checked;localStorage.setItem('tft_simpleMode',String(simpleMode));updateUI();});
   $('btnAdd').addEventListener('click',openModal);$('btnReset').addEventListener('click',resetAll);$('btnMatch').addEventListener('click',doMatch);
   $('btnUndo').addEventListener('click',undo);
-  $('modalCloseBtn').addEventListener('click',closeModal);$('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal();});
+  $('modalCloseBtn').addEventListener('click',closeModal);$('modalBackBtn').addEventListener('click',prevStep);$('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal();});
   $('inputName').addEventListener('keydown',e=>{if(e.key==='Enter')nextStep(1);});$('btnNext').addEventListener('click',()=>nextStep(1));
   $('btnBack').addEventListener('click',backToMain);$('btnCopy').addEventListener('click',copyDisc);
   $('editCloseBtn').addEventListener('click',closeEditModal);$('editOverlay').addEventListener('click',e=>{if(e.target===$('editOverlay'))closeEditModal();});

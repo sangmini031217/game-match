@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // Modal
   $('modalCloseBtn').addEventListener('click',closeModal);
+  $('modalBackBtn').addEventListener('click',prevStep);
   $('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal();});
   $('inputName').addEventListener('keydown',e=>{if(e.key==='Enter')nextStep(1);});
   $('btnNext').addEventListener('click',()=>nextStep(1));
