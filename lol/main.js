@@ -1,6 +1,6 @@
 'use strict';
 document.addEventListener('DOMContentLoaded',()=>{
-  load();applyI18n();updateUI();
+  load();applyI18n();updateUI();initDarkMode();
 
   // Lang
   document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>{setLangStorage(b.dataset.lang);applyI18n();updateUI();}));
@@ -41,4 +41,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('conflictCloseBtn').addEventListener('click',closeConflict);
   $('conflictCancelBtn').addEventListener('click',closeConflict);
   $('conflictForceBtn').addEventListener('click',forceMatch);
+
+  // Favorites
+  $('btnFavToggle').addEventListener('click',toggleFavPanel);
 });

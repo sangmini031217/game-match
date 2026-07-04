@@ -17,7 +17,7 @@ function applyMain(){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
 }
 document.addEventListener('DOMContentLoaded',()=>{
-  applyMain();
+  applyMain();initDarkMode();
   document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>{
     setLangStorage(b.dataset.lang);applyMain();
   }));

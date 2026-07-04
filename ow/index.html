@@ -12,6 +12,7 @@
     <a href="../index.html" class="topbar-back">&larr;</a>
     <span class="topbar-title" id="appTitle"></span>
     <div class="topbar-right">
+      <button class="dark-mode-btn" id="darkModeBtn">🌙</button>
       <div class="lang-toggle">
         <button class="lang-btn active" data-lang="ko">한국어</button>
         <button class="lang-btn" data-lang="en">EN</button>
@@ -66,6 +67,14 @@
       <div class="card" id="playerListCard" style="display:none">
         <div class="section-label" id="sectionLabelPlayers"></div>
         <div id="playerGrid" class="player-list"></div>
+      </div>
+      <!-- Favorites -->
+      <div class="card" id="favCard">
+        <div class="fav-header">
+          <div class="section-label" id="favSectionLabel"></div>
+          <button class="btn btn-ghost btn-util" id="btnFavToggle" style="font-size:11px;padding:6px 10px">⭐</button>
+        </div>
+        <div id="favList" class="fav-list" style="display:none"></div>
       </div>
     </div>
     <div class="right-panel">

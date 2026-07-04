@@ -28,6 +28,7 @@ function openEditModal(idx){
       <button class="btn btn-ghost" style="flex:1" id="editCancelBtn">${t('btnCancel')}</button>
       <button class="btn btn-primary" style="flex:1" id="editSaveBtn">${t('btnSave')}</button>
     </div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" id="editFavBtn">${t('favAdd')}</button>
   `;
 
   // tier selection in edit
@@ -46,6 +47,11 @@ function openEditModal(idx){
     p.mustWith=[];body.querySelectorAll('#editMustList input:checked').forEach(cb=>p.mustWith.push(cb.dataset.id));
     p.avoidWith=[];body.querySelectorAll('#editAvoidList input:checked').forEach(cb=>p.avoidWith.push(cb.dataset.id));
     save();updateUI();closeEditModal();showToast(t('btnSave'));
+  });
+  $('editFavBtn').addEventListener('click',()=>{
+    const ok=addFavorite(p,'lol');
+    showToast(ok?t('favAdded'):t('favExists'));
+    if(ok&&typeof renderFavList==='function')renderFavList();
   });
 
   $('editOverlay').classList.add('active');

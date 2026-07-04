@@ -8,11 +8,11 @@ function openModal(){
   if(autoName){
     // Skip name step — auto-assign mob name
     draft.name=getNextMobName();
-    const totalSteps=simpleMode?1:3; // tier, (sub), lane
+    const totalSteps=simpleMode?2:3; // tier, (sub), lane
     $('stepIndicator').innerHTML=Array.from({length:totalSteps},(_,i)=>`<div class="step-dot" id="dot${i+1}"></div>`).join('');
     buildTierChips();goStep(2);
   } else {
-    const totalSteps=simpleMode?2:4;
+    const totalSteps=simpleMode?3:4;
     $('stepIndicator').innerHTML=Array.from({length:totalSteps},(_,i)=>`<div class="step-dot" id="dot${i+1}"></div>`).join('');
     goStep(1);$('inputName').value='';$('inputName').placeholder=t('inputPlaceholder');
   }
@@ -22,7 +22,7 @@ function openModal(){
 function closeModal(){$('modalOverlay').classList.remove('active');}
 
 function goStep(n){
-  const totalSteps=simpleMode?2:4;
+  const totalSteps=simpleMode?3:4;
   for(let i=1;i<=4;i++){const el=$('step'+i);if(el)el.classList.toggle('active',i===n);}
   curStep=n;
   for(let i=1;i<=totalSteps;i++){const d=$('dot'+i);if(d)d.className='step-dot'+(i<n?' done':i===n?' active':'');}
@@ -50,7 +50,7 @@ function buildTierChips(){
 function selTier(el,tk){
   draft.tierKey=tk;$('tierChips').querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');
   setTimeout(()=>{
-    if(simpleMode){draft.subTier=null;draft.masterLpIdx=null;draft.laneKey='상관없음';finishAdd();return;}
+    if(simpleMode){draft.subTier=null;draft.masterLpIdx=null;buildLaneChips();goStep(4);return;}
     if(NO_SUB.includes(tk)){if(tk==='마스터')buildMasterChips();else{draft.subTier=null;draft.masterLpIdx=null;buildLaneChips();goStep(4);}}
     else{buildSubChips(tk);goStep(3);}
   },180);

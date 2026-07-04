@@ -24,6 +24,7 @@ function applyI18n(){
   const inp=$('inputName');if(inp)inp.placeholder=t('inputPlaceholder');
   for(let i=1;i<=3;i++){const e=$('stepLabel'+i);if(e)e.textContent=t('stepLabels')[i-1];}
   const ml=$('masterLpLabel');if(ml)ml.textContent=t('masterLpLabel');
+  const fs=$('favSectionLabel');if(fs)fs.textContent=t('favTitle');
 }
 
 function updateUI(){
@@ -61,6 +62,7 @@ function openEditModal(idx){
     <div class="edit-section"><div class="edit-section-title">${t('editName')}</div><input class="input-field" id="editNameInput" value="${esc(p.name)}" maxlength="20"></div>
     <div class="edit-section"><div class="edit-section-title">${t('editTier')}</div><div class="chip-grid" id="editTierGrid">${TIER_KEYS.map((k,i)=>`<div class="chip${k===p.tierKey?' selected':''}" data-t="${k}">${tiers[i]}</div>`).join('')}</div></div>
     <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-ghost" style="flex:1" id="editCancelBtn">${t('btnCancel')}</button><button class="btn btn-primary" style="flex:1" id="editSaveBtn">${t('btnSave')}</button></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" id="editFavBtn">${t('favAdd')}</button>
   `;
   body.querySelectorAll('#editTierGrid .chip').forEach(c=>c.addEventListener('click',()=>{body.querySelectorAll('#editTierGrid .chip').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');}));
   $('editCancelBtn').addEventListener('click',closeEditModal);
@@ -71,6 +73,11 @@ function openEditModal(idx){
     if(sel)p.tierKey=sel.dataset.t;
     if(NO_SUB.includes(p.tierKey))p.subTier=null;
     save();updateUI();closeEditModal();showToast(t('btnSave'));
+  });
+  $('editFavBtn').addEventListener('click',()=>{
+    const ok=addFavorite(p,'tft');
+    showToast(ok?t('favAdded'):t('favExists'));
+    if(ok&&typeof renderFavList==='function')renderFavList();
   });
   $('editOverlay').classList.add('active');
 }
@@ -117,6 +124,32 @@ function showResult(){
   }).join('');
 }
 function backToMain(){$('resultScreen').classList.remove('active');$('placeholderCard').style.display='';}
+
+// Favorites UI
+let favOpen=false;
+function toggleFavPanel(){
+  favOpen=!favOpen;
+  $('favList').style.display=favOpen?'':'none';
+  if(favOpen)renderFavList();
+}
+function renderFavList(){
+  const favs=getFavorites('tft'),l=getLang(),list=$('favList');
+  if(!favs.length){list.innerHTML=`<div class="fav-empty">${t('favEmpty')}</div>`;return;}
+  list.innerHTML=favs.map((f,i)=>{
+    const sc=calcScore(f).toFixed(1),ts=tierDisp(f,l),sh=tierShort(f,l),c=TIER_COLORS[f.tierKey]||'#6B7684';
+    return`<div class="fav-item"><div class="tier-badge" style="color:${c};background:${c}18;width:32px;height:32px;font-size:10px">${sh}</div><div class="fav-info"><div class="fav-name">${esc(f.name)}</div><div class="fav-meta">${ts} · ${sc}pt</div></div><div class="fav-actions"><button class="btn btn-primary" style="padding:6px 10px;font-size:11px" data-fav-load="${i}">${t('favLoad')}</button><button class="btn btn-danger" style="padding:6px 8px;font-size:11px" data-fav-rm="${i}">${t('favDelete')}</button></div></div>`;
+  }).join('');
+  list.querySelectorAll('[data-fav-load]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();loadFavoriteTft(+b.dataset.favLoad);}));
+  list.querySelectorAll('[data-fav-rm]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeFavorite(+b.dataset.favRm,'tft');renderFavList();}));
+}
+function loadFavoriteTft(idx){
+  const favs=getFavorites('tft'),f=favs[idx];if(!f)return;
+  if(players.length>=tftCount){showToast(t('emptyHint'));return;}
+  undoStack.push(JSON.parse(JSON.stringify(players)));
+  players.push({id:Date.now()+Math.random().toString(36).slice(2),name:f.name,tierKey:f.tierKey,subTier:f.subTier||null,masterLpIdx:f.masterLpIdx??null,laneKey:'상관없음',mustWith:[],avoidWith:[]});
+  save();updateUI();showToast(`${f.name} ${t('toastAdded')}`);
+}
+
 function copyDisc(){
   if(!tftTeams.length)return;const l=getLang();
   const lines=tftTeams.map((pair,i)=>`* ${t('teamLabel')} ${i+1}: ${pair[0].name} (${tierDisp(pair[0],l)}), ${pair[1].name} (${tierDisp(pair[1],l)})`);
@@ -126,7 +159,7 @@ function copyDisc(){
 
 // Init
 document.addEventListener('DOMContentLoaded',()=>{
-  load();$('tftCountSelect').value=String(tftCount);applyI18n();updateUI();
+  load();$('tftCountSelect').value=String(tftCount);applyI18n();updateUI();initDarkMode();
   document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>{setLangStorage(b.dataset.lang);applyI18n();updateUI();}));
   $('tftCountSelect').addEventListener('change',e=>{tftCount=+e.target.value;localStorage.setItem('tft_count',String(tftCount));if(players.length>tftCount){undoStack.push(JSON.parse(JSON.stringify(players)));players=players.slice(0,tftCount);save();}$('resultScreen').classList.remove('active');$('placeholderCard').style.display='';updateUI();});
   $('simpleModeToggle').addEventListener('change',e=>{simpleMode=e.target.checked;localStorage.setItem('tft_simpleMode',String(simpleMode));updateUI();});
@@ -136,4 +169,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('inputName').addEventListener('keydown',e=>{if(e.key==='Enter')nextStep(1);});$('btnNext').addEventListener('click',()=>nextStep(1));
   $('btnBack').addEventListener('click',backToMain);$('btnCopy').addEventListener('click',copyDisc);
   $('editCloseBtn').addEventListener('click',closeEditModal);$('editOverlay').addEventListener('click',e=>{if(e.target===$('editOverlay'))closeEditModal();});
+  $('btnFavToggle').addEventListener('click',toggleFavPanel);
 });

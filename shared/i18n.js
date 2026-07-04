@@ -41,6 +41,7 @@ ko:{
   guideAlgo:'입력된 유저들의 실력(티어 점수)을 기반으로, 롤 협곡 모드는 양 팀의 평균 점수가 가장 비슷해질 때까지 수만 번 조합을 계산하는 황금 밸런스 알고리즘을, 롤체 더블업 모드는 고수와 초보를 차례대로 묶어주는 상하 균등 분배 알고리즘을 사용합니다.',
   editTitle:'참가자 수정',editName:'이름',editTier:'티어',
   editMust:'필수 동료 (같은 팀)',editAvoid:'기피 동료 (다른 팀)',
+  favTitle:'즐겨찾기',favEmpty:'저장된 즐겨찾기가 없습니다',favAdd:'⭐ 즐겨찾기 추가',favAdded:'즐겨찾기에 추가됨',favExists:'이미 즐겨찾기에 있습니다',favLoad:'불러오기',favDelete:'삭제',favSection:'즐겨찾기에서 불러오기',
 },
 en:{
   appTitleLol:'League of Legends',appTitleTft:'TFT Double Up',
@@ -77,6 +78,7 @@ en:{
   guideAlgo:'The LoL mode calculates tens of thousands of combinations to find the golden balance. TFT Double Up pairs the highest and lowest tiers sequentially for the fairest teams.',
   editTitle:'Edit Player',editName:'Name',editTier:'Tier',
   editMust:'Must-play with (same team)',editAvoid:'Avoid (different team)',
+  favTitle:'Favorites',favEmpty:'No favorites saved',favAdd:'⭐ Add to Favorites',favAdded:'Added to favorites',favExists:'Already in favorites',favLoad:'Load',favDelete:'Delete',favSection:'Load from Favorites',
 },
 ja:{
   appTitleLol:'リーグ・オブ・レジェンド',appTitleTft:'TFTダブルアップ',
@@ -113,6 +115,7 @@ ja:{
   guideAlgo:'LoLモードは数万通りの組み合わせから最適バランスを計算します。TFTは上位と下位を順次ペアにします。',
   editTitle:'プレイヤー編集',editName:'名前',editTier:'ティア',
   editMust:'必須チームメイト',editAvoid:'回避プレイヤー',
+  favTitle:'お気に入り',favEmpty:'お気に入りなし',favAdd:'⭐ お気に入り追加',favAdded:'追加しました',favExists:'既に登録済み',favLoad:'読込',favDelete:'削除',favSection:'お気に入りから読込',
 },
 zh:{
   appTitleLol:'英雄联盟',appTitleTft:'云顶双人作战',
@@ -149,5 +152,5 @@ zh:{
   guideAlgo:'LoL模式通过数万次组合计算找到黄金平衡。TFT模式将最高与最低段位依次配对。',
   editTitle:'编辑玩家',editName:'名称',editTier:'段位',
   editMust:'必须同队',editAvoid:'回避玩家',
-}};
-function t(k){const l=getLang();return I18N[l]?.[k]??I18N.ko[k]??k;}
+  favTitle:'收藏夹',favEmpty:'暂无收藏',favAdd:'⭐ 添加收藏',favAdded:'已添加',favExists:'已在收藏中',favLoad:'加载',favDelete:'删除',favSection:'从收藏加载',
+}};function t(k){const l=getLang();return I18N[l]?.[k]??I18N.ko[k]??k;}

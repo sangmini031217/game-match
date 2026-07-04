@@ -12,6 +12,7 @@
     <a href="../index.html" class="topbar-back">&larr;</a>
     <span class="topbar-title" id="appTitle"></span>
     <div class="topbar-right">
+      <button class="dark-mode-btn" id="darkModeBtn">🌙</button>
       <div class="lang-toggle">
         <button class="lang-btn active" data-lang="ko">한국어</button>
         <button class="lang-btn" data-lang="en">EN</button>
@@ -28,7 +29,6 @@
           <div class="stat-row">
             <div>
               <div class="stat-count"><span class="n-cur" id="countNum">0</span><span class="n-sep">/</span><span class="n-tot" id="countTotal">10</span></div>
-              <div class="stat-label" id="statLabelSub"></div>
             </div>
             <div class="stat-actions">
               <button class="btn btn-primary" id="btnAdd"><span id="btnAddText"></span></button>
@@ -69,16 +69,26 @@
           <button class="btn btn-primary btn-match" id="btnMatch"><span id="btnMatchText"></span></button>
         </div>
       </div>
+      <!-- Player list -->
+      <div class="card" id="playerListCard" style="display:none">
+        <div class="fav-header">
+          <div class="section-label" id="sectionLabelPlayers"></div>
+        </div>
+        <div id="playerGrid" class="player-list"></div>
+      </div>
+      <!-- Favorites -->
+      <div class="card" id="favCard">
+        <div class="fav-header">
+          <div class="section-label" id="favSectionLabel"></div>
+          <button class="btn btn-ghost btn-util" id="btnFavToggle" style="font-size:11px;padding:6px 10px">⭐</button>
+        </div>
+        <div id="favList" class="fav-list" style="display:none"></div>
+      </div>
       <!-- Guide card -->
       <div class="card guide-card" id="guideCard">
         <div class="guide-item" id="guideAutoFill"></div>
         <div class="guide-item" id="guideRelation"></div>
         <div class="guide-item" id="guideAlgo"></div>
-      </div>
-      <!-- Player list -->
-      <div class="card" id="playerListCard" style="display:none">
-        <div class="section-label" id="sectionLabelPlayers"></div>
-        <div id="playerGrid" class="player-list"></div>
       </div>
     </div>
     <div class="right-panel">

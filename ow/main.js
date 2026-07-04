@@ -56,6 +56,7 @@ function applyI18n(){
   s('autoNameLabel',ot('autoNameLabel'));s('simpleModeLabel',ot('simpleMode'));s('matchSizeLabel',ot('matchSize'));
   s('btnNext',ot('btnNext'));s('balanceLabel',ot('balanceLabel'));
   s('guideAutoFill','🎲 '+ot('guideAutoFill'));s('guideRelation','🚫 '+ot('guideRelation'));s('guideAlgo','⚖️ '+ot('guideAlgo'));s('algoInfoText','⚖️ '+ot('guideAlgo'));
+  const fs=$('favSectionLabel');if(fs)fs.textContent=t('favTitle');
   const inp=$('inputName');if(inp)inp.placeholder=ot('inputPlaceholder');
   for(let i=1;i<=4;i++){const e=$('stepLabel'+i);if(e)e.textContent=ot('stepLabels')[i-1];}
 }
@@ -103,6 +104,7 @@ function openEditModal(idx){
     ${others.length?`<div class="edit-section"><div class="edit-section-title">${I18N[l]?.editMust||'필수 동료 (같은 팀)'}</div><div class="edit-check-list" id="editMustList">${others.map(o=>`<label class="edit-check-item"><input type="checkbox" data-id="${o.id}" ${(p.mustWith||[]).includes(o.id)?'checked':''}>${esc(o.name)}</label>`).join('')}</div></div>`:''}
     ${others.length?`<div class="edit-section"><div class="edit-section-title">${I18N[l]?.editAvoid||'기피 동료 (다른 팀)'}</div><div class="edit-check-list" id="editAvoidList">${others.map(o=>`<label class="edit-check-item"><input type="checkbox" data-id="${o.id}" ${(p.avoidWith||[]).includes(o.id)?'checked':''}>${esc(o.name)}</label>`).join('')}</div></div>`:''}
     <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-ghost" style="flex:1" id="editCancelBtn">${ot('btnCancel')}</button><button class="btn btn-primary" style="flex:1" id="editSaveBtn">${ot('btnSave')}</button></div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" id="editFavBtn">${t('favAdd')}</button>
   `;
   body.querySelectorAll('#editTierGrid .chip').forEach(c=>c.addEventListener('click',()=>{body.querySelectorAll('#editTierGrid .chip').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');}));
   $('editCancelBtn').addEventListener('click',closeEditModal);
@@ -114,6 +116,11 @@ function openEditModal(idx){
     p.mustWith=[];const ml=body.querySelectorAll('#editMustList input:checked');if(ml)ml.forEach(cb=>p.mustWith.push(cb.dataset.id));
     p.avoidWith=[];const al=body.querySelectorAll('#editAvoidList input:checked');if(al)al.forEach(cb=>p.avoidWith.push(cb.dataset.id));
     save();updateUI();closeEditModal();showToast(ot('btnSave'));
+  });
+  $('editFavBtn').addEventListener('click',()=>{
+    const ok=addFavorite(p,'ow');
+    showToast(ok?t('favAdded'):t('favExists'));
+    if(ok&&typeof renderFavList==='function')renderFavList();
   });
   $('editOverlay').classList.add('active');
 }
@@ -211,6 +218,34 @@ function renderTeam(team,score,side){
 }
 function backToMain(){$('resultScreen').classList.remove('active');$('placeholderCard').style.display='';}
 
+// ── FAVORITES ──
+let favOpen=false;
+function toggleFavPanel(){
+  favOpen=!favOpen;
+  $('favList').style.display=favOpen?'':'none';
+  if(favOpen)renderFavList();
+}
+function renderFavList(){
+  const favs=getFavorites('ow'),l=getLang(),list=$('favList');
+  if(!favs.length){list.innerHTML=`<div class="fav-empty">${t('favEmpty')}</div>`;return;}
+  list.innerHTML=favs.map((f,i)=>{
+    const tierKey=f.tierKey;const sc=OW_SCORES[tierKey]?owCalcScore(f).toFixed(1):calcScore(f).toFixed(1);
+    const ts=OW_TIERS.includes(tierKey)?owTierDisp(f):tierDisp(f,l);
+    const sh=OW_TIERS.includes(tierKey)?owTierShort(f):(tierShort(f,l));
+    const c=OW_COLORS[tierKey]||TIER_COLORS[tierKey]||'#6B7684';
+    return`<div class="fav-item"><div class="tier-badge" style="color:${c};background:${c}18;width:32px;height:32px;font-size:10px">${sh}</div><div class="fav-info"><div class="fav-name">${esc(f.name)}</div><div class="fav-meta">${ts} · ${sc}pt</div></div><div class="fav-actions"><button class="btn btn-primary" style="padding:6px 10px;font-size:11px" data-fav-load="${i}">${t('favLoad')}</button><button class="btn btn-danger" style="padding:6px 8px;font-size:11px" data-fav-rm="${i}">${t('favDelete')}</button></div></div>`;
+  }).join('');
+  list.querySelectorAll('[data-fav-load]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();loadFavoriteOw(+b.dataset.favLoad);}));
+  list.querySelectorAll('[data-fav-rm]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeFavorite(+b.dataset.favRm,'ow');renderFavList();}));
+}
+function loadFavoriteOw(idx){
+  const favs=getFavorites('ow'),f=favs[idx];if(!f)return;
+  if(players.length>=getMax()){showToast(ot('emptyHint')||'Full');return;}
+  undoStack.push(JSON.parse(JSON.stringify(players)));
+  players.push({id:Date.now()+Math.random().toString(36).slice(2),name:f.name,tierKey:f.tierKey,subTier:f.subTier||null,role:f.role||'자유',mustWith:[],avoidWith:[]});
+  save();updateUI();showToast(`${f.name} ${ot('toastAdded')}`);
+}
+
 // ── COPY ──
 function copyToDiscord(){
   if(!matchResults.length)return;const c=matchResults[curIdx];if(!c)return;
@@ -223,7 +258,7 @@ function copyToDiscord(){
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
-  load();applyI18n();updateUI();
+  load();applyI18n();updateUI();initDarkMode();
   document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>{setLangStorage(b.dataset.lang);applyI18n();updateUI();}));
   $('simpleModeToggle').addEventListener('change',e=>{simpleMode=e.target.checked;localStorage.setItem('ow_simpleMode',String(simpleMode));updateUI();});
   $('matchSizeSelect').addEventListener('change',e=>{matchSize=+e.target.value;localStorage.setItem('ow_matchSize',String(matchSize));if(players.length>getMax()){undoStack.push(JSON.parse(JSON.stringify(players)));players=players.slice(0,getMax());save();}$('resultScreen').classList.remove('active');$('placeholderCard').style.display='';updateUI();});
@@ -232,4 +267,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('modalCloseBtn').addEventListener('click',closeModal);$('modalBackBtn').addEventListener('click',prevStep);$('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal();});
   $('inputName').addEventListener('keydown',e=>{if(e.key==='Enter')nextStep(1);});$('btnNext').addEventListener('click',()=>nextStep(1));
   $('editCloseBtn').addEventListener('click',closeEditModal);$('editOverlay').addEventListener('click',e=>{if(e.target===$('editOverlay'))closeEditModal();});
+  $('btnFavToggle').addEventListener('click',toggleFavPanel);
 });

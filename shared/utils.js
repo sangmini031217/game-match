@@ -45,3 +45,35 @@ function laneDisp(k,lang){
 
 function getLang(){return localStorage.getItem('tm_lang')||'ko';}
 function setLangStorage(l){localStorage.setItem('tm_lang',l);}
+
+// Dark mode
+function getDarkMode(){return localStorage.getItem('tm_dark')==='true';}
+function setDarkMode(on){
+  localStorage.setItem('tm_dark',String(on));
+  document.documentElement.setAttribute('data-theme',on?'dark':'light');
+  const btn=document.getElementById('darkModeBtn');
+  if(btn)btn.textContent=on?'☀️':'🌙';
+}
+function initDarkMode(){
+  const saved=getDarkMode();
+  document.documentElement.setAttribute('data-theme',saved?'dark':'light');
+  const btn=document.getElementById('darkModeBtn');
+  if(btn){btn.textContent=saved?'☀️':'🌙';btn.addEventListener('click',()=>setDarkMode(!getDarkMode()));}
+}
+
+// Favorites
+function getFavorites(game){const key='tm_favorites_'+(game||'lol');try{return JSON.parse(localStorage.getItem(key)||'[]');}catch{return[];}}
+function saveFavorites(favs,game){const key='tm_favorites_'+(game||'lol');localStorage.setItem(key,JSON.stringify(favs));}
+function addFavorite(player,game){
+  const favs=getFavorites(game);
+  const exists=favs.find(f=>f.name===player.name&&f.tierKey===player.tierKey&&f.subTier===player.subTier);
+  if(exists)return false;
+  favs.push({name:player.name,tierKey:player.tierKey,subTier:player.subTier,masterLpIdx:player.masterLpIdx??null,laneKey:player.laneKey||'상관없음',role:player.role||null});
+  saveFavorites(favs,game);
+  return true;
+}
+function removeFavorite(idx,game){
+  const favs=getFavorites(game);
+  favs.splice(idx,1);
+  saveFavorites(favs,game);
+}

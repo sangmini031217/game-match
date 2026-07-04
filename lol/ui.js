@@ -10,7 +10,7 @@ function applyI18n(){
   const l=getLang();document.documentElement.lang=l==='zh'?'zh-CN':l;
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
   const s=(id,val)=>{const el=$(id);if(el)el.textContent=val;};
-  s('appTitle',t('appTitleLol'));s('statLabelSub',t('statLabel'));
+  s('appTitle',t('appTitleLol'));
   s('btnAddText',t('btnAdd'));s('btnReset',t('btnReset'));s('btnMatchText',t('btnMatch'));
   s('placeholderTitle',t('placeholderTitle'));s('placeholderSub',t('placeholderSub'));
   s('sectionLabelPlayers',t('sectionPlayers'));
@@ -24,6 +24,7 @@ function applyI18n(){
   const inp=$('inputName');if(inp)inp.placeholder=t('inputPlaceholder');
   for(let i=1;i<=4;i++){const e=$('stepLabel'+i);if(e)e.textContent=t('stepLabels')[i-1];}
   const ml=$('masterLpLabel');if(ml)ml.textContent=t('masterLpLabel');
+  s('favSectionLabel',t('favTitle'));
   renderGuide();
 }
 
@@ -44,7 +45,9 @@ function updateUI(){
 
 function renderGrid(){
   const g=$('playerGrid'),l=getLang();if(!players.length){g.innerHTML='';return;}
-  g.innerHTML=players.map((p,i)=>{
+  const sorted=[...players].map((p,i)=>({...p,_idx:i})).sort((a,b)=>calcScore(b)-calcScore(a));
+  g.innerHTML=sorted.map(p=>{
+    const i=p._idx;
     const sc=calcScore(p).toFixed(1),ts=tierDisp(p,l),sh=tierShort(p,l),ls=laneDisp(p.laneKey,l),c=TIER_COLORS[p.tierKey]||'#6B7684';
     const must=(p.mustWith||[]).map(id=>players.find(x=>x.id===id)?.name).filter(Boolean);
     const avoid=(p.avoidWith||[]).map(id=>players.find(x=>x.id===id)?.name).filter(Boolean);
@@ -72,4 +75,32 @@ function resetAll(){
 function undo(){
   if(!undoStack.length)return;
   players=undoStack.pop();save();updateUI();showToast(t('btnUndo'));
+}
+
+// Favorites UI
+let favOpen=false;
+function toggleFavPanel(){
+  favOpen=!favOpen;
+  $('favList').style.display=favOpen?'':'none';
+  if(favOpen)renderFavList();
+}
+function renderFavList(){
+  const favs=getFavorites('lol'),l=getLang(),list=$('favList');
+  if(!favs.length){list.innerHTML=`<div class="fav-empty">${t('favEmpty')}</div>`;return;}
+  const sorted=[...favs].map((f,i)=>({...f,_idx:i})).sort((a,b)=>calcScore(b)-calcScore(a));
+  list.innerHTML=sorted.map(f=>{
+    const i=f._idx;
+    const sc=calcScore(f).toFixed(1),ts=tierDisp(f,l),sh=tierShort(f,l),c=TIER_COLORS[f.tierKey]||'#6B7684';
+    const ls=simpleMode?'':`· ${laneDisp(f.laneKey,l)}`;
+    return`<div class="fav-item"><div class="tier-badge" style="color:${c};background:${c}18;width:32px;height:32px;font-size:10px">${sh}</div><div class="fav-info"><div class="fav-name">${esc(f.name)}</div><div class="fav-meta">${ts} ${ls} · ${sc}pt</div></div><div class="fav-actions"><button class="btn btn-primary" style="padding:6px 10px;font-size:11px" data-fav-load="${i}">${t('favLoad')}</button><button class="btn btn-danger" style="padding:6px 8px;font-size:11px" data-fav-rm="${i}">${t('favDelete')}</button></div></div>`;
+  }).join('');
+  list.querySelectorAll('[data-fav-load]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();loadFavorite(+b.dataset.favLoad);}));
+  list.querySelectorAll('[data-fav-rm]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeFavorite(+b.dataset.favRm,'lol');renderFavList();}));
+}
+function loadFavorite(idx){
+  const favs=getFavorites('lol'),f=favs[idx];if(!f)return;
+  if(players.length>=getMax()){showToast(t('emptyHint'));return;}
+  undoStack.push(JSON.parse(JSON.stringify(players)));
+  players.push({id:Date.now()+Math.random().toString(36).slice(2),name:f.name,tierKey:f.tierKey,subTier:f.subTier||null,masterLpIdx:f.masterLpIdx??null,laneKey:f.laneKey||'상관없음',mustWith:[],avoidWith:[]});
+  save();updateUI();showToast(`${f.name} ${t('toastAdded')}`);
 }

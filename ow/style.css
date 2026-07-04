@@ -1,5 +1,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--page-bg:#F9FAFB;--card-bg:#FFF;--blue:#3182F6;--blue-h:#1B6EE8;--blue-dim:rgba(49,130,246,.08);--red:#F04452;--red-dim:rgba(240,68,82,.07);--green:#00C471;--green-dim:rgba(0,196,113,.09);--orange:#F57C00;--orange-dim:rgba(245,124,0,.08);--text:#111827;--text2:#6B7684;--text3:#C2C8D0;--border:#E5E8EB;--card-shadow:0 4px 20px rgba(0,0,0,.03);--r:18px;--r-sm:12px;--r-xs:8px}
+[data-theme="dark"]{--page-bg:#1A1B1E;--card-bg:#25262B;--blue:#4C9AFF;--blue-h:#70B0FF;--blue-dim:rgba(76,154,255,.12);--red:#FF6B7A;--red-dim:rgba(255,107,122,.1);--green:#4ADE80;--green-dim:rgba(74,222,128,.1);--orange:#FFB347;--orange-dim:rgba(255,179,71,.1);--text:#E1E3E6;--text2:#909399;--text3:#4A4D52;--border:#353739;--card-shadow:0 4px 20px rgba(0,0,0,.2)}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Roboto,sans-serif;background:var(--page-bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;letter-spacing:-.03em}
 .page{max-width:1200px;margin:0 auto;padding:40px 32px 80px}
 .topbar{display:flex;align-items:center;gap:16px;margin-bottom:36px;flex-wrap:wrap}
@@ -8,6 +9,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Robo
 .topbar-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .topbar-sub{font-size:14px;color:var(--text2);font-weight:500;white-space:nowrap}
 .lang-toggle{display:flex;gap:3px;background:var(--border);border-radius:var(--r-xs);padding:3px}
+.dark-mode-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card-bg);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}.dark-mode-btn:hover{border-color:var(--blue);background:var(--blue-dim)}.dark-mode-btn:active{transform:scale(.9)}
 .lang-btn{padding:5px 10px;border-radius:6px;border:none;background:transparent;font-family:inherit;font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .12s}.lang-btn:active{transform:scale(.94)}.lang-btn.active{background:var(--card-bg);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .dashboard{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}@media(max-width:900px){.page{padding:24px 16px 60px}.dashboard{grid-template-columns:1fr}}
 .card{background:var(--card-bg);border-radius:var(--r);box-shadow:var(--card-shadow);overflow:hidden}
@@ -61,6 +63,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Robo
 .error-msg{margin:0 20px;background:var(--red-dim);border-radius:var(--r-sm);padding:12px 16px;color:var(--red);font-size:12px;font-weight:600;text-align:center}
 .warn-msg{margin:0 20px;background:var(--orange-dim);border-radius:var(--r-sm);padding:10px 16px;color:var(--orange);font-size:11px;font-weight:600;text-align:center}
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s;padding:20px}.modal-overlay.active{opacity:1;pointer-events:all}
+[data-theme="dark"] .modal-overlay{background:rgba(0,0,0,.7)}
+[data-theme="dark"] .player-item:hover{background:rgba(76,154,255,.08)}
+[data-theme="dark"] .toast{background:rgba(225,227,230,.92);color:#1A1B1E}
 .modal-sheet{background:var(--card-bg);border-radius:24px;width:100%;max-width:480px;box-shadow:0 8px 60px rgba(0,0,0,.12);transform:translateY(20px) scale(.98);transition:transform .28s cubic-bezier(.34,1.4,.64,1);max-height:88vh;overflow-y:auto}.modal-overlay.active .modal-sheet{transform:translateY(0) scale(1)}
 .modal-header{padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;gap:8px}.modal-title{font-size:18px;font-weight:800;letter-spacing:-.04em;flex:1}
 .modal-back{border:none;background:none;font-size:18px;color:var(--text2);cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .12s;flex-shrink:0}.modal-back:hover{color:var(--blue)}.modal-back:active{transform:scale(.9)}
@@ -77,3 +82,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Robo
 .edit-check-list{display:flex;flex-direction:column;gap:6px}.edit-check-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer}.edit-check-item input{width:16px;height:16px;accent-color:var(--blue)}
 .conflict-msg{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;white-space:pre-line;font-weight:500}.conflict-btn-row{display:flex;gap:8px}.conflict-btn-row .btn{flex:1}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(17,24,39,.92);color:#fff;padding:10px 18px;border-radius:12px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.fav-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px 8px}
+.fav-list{padding:0 16px 16px}
+.fav-empty{font-size:12px;color:var(--text3);text-align:center;padding:16px;font-weight:500}
+.fav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);transition:background .1s;margin-bottom:4px}.fav-item:hover{background:var(--page-bg)}
+.fav-info{flex:1;min-width:0}.fav-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fav-meta{font-size:10px;color:var(--text2);margin-top:2px;font-weight:500}
+.fav-actions{display:flex;gap:4px;flex-shrink:0}
