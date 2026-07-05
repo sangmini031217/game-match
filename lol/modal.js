@@ -9,7 +9,7 @@ function openModal(){
     draft.name=getNextMobName();
     modalTotalSteps=simpleMode?2:3; // tier, lane  OR  tier, sub, lane
     $('stepIndicator').innerHTML=Array.from({length:modalTotalSteps},(_,i)=>`<div class="step-dot" id="dot${i+1}"></div>`).join('');
-    buildTierChips();showStep(1);
+    buildTierChips();showStep(1,2);
   } else {
     modalTotalSteps=simpleMode?3:4; // name, tier, lane  OR  name, tier, sub, lane
     $('stepIndicator').innerHTML=Array.from({length:modalTotalSteps},(_,i)=>`<div class="step-dot" id="dot${i+1}"></div>`).join('');
